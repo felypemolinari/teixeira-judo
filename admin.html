@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Metadados básicos -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Teixeira Judô</title>
+    
+    <!-- Links para folhas de estilo -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/styles/admin-styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Container principal do painel administrativo -->
+    <div class="admin-container">
+        <!-- Cabeçalho do painel -->
+        <header class="admin-header">
+            <div class="header-left">
+                <img src="assets/teixeira-judo-logo.png" alt="Teixeira Judô" class="logo-img">
+                <h1 class="admin-title">Painel Administrativo</h1>
+            </div>
+            
+            <!-- Botão para menu mobile -->
+            <div class="header-center">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <!-- Área do usuário -->
+            <div class="header-right">
+                <div class="admin-user">
+                    <span class="admin-name">Admin</span>
+                    <div class="admin-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <!-- Menu dropdown do usuário -->
+                    <div class="dropdown-menu" id="userDropdown">
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-user"></i> Perfil
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-cog"></i> Configurações
+                        </a>
+                        <hr class="dropdown-divider">
+                        <a href="index.html" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i> Sair
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Corpo do painel -->
+        <div class="admin-body">
+            <!-- Barra lateral de navegação -->
+            <aside class="admin-sidebar" id="adminSidebar">
+                <nav class="sidebar-nav">
+                    <ul class="nav-list">
+                        <!-- Item de menu para Posts do Blog -->
+                        <li class="nav-item active" data-section="blog-posts">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-blog"></i>
+                                <span>Posts do Blog</span>
+                            </a>
+                        </li>
+                        
+                        <!-- Item de menu para Eventos -->
+                        <li class="nav-item" data-section="events">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-calendar"></i>
+                                <span>Eventos</span>
+                            </a>
+                        </li>
+                        
+                        <!-- Item de menu para Galeria -->
+                        <li class="nav-item" data-section="gallery">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-images"></i>
+                                <span>Galeria</span>
+                            </a>
+                        </li>
+                        
+                        <!-- Item de menu para Depoimentos -->
+                        <li class="nav-item" data-section="testimonials">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-quote-left"></i>
+                                <span>Depoimentos</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Conteúdo principal -->
+            <main class="admin-main">
+                <!-- Seção de Posts do Blog -->
+                <section id="blog-posts-section" class="content-section active">
+                    <div class="section-header">
+                        <h2 class="section-title">Posts do Blog</h2>
+                        <button class="btn btn-primary" id="newPostBtn">
+                            <i class="fas fa-plus"></i> Novo Post
+                        </button>
+                    </div>
+
+                    <div class="content-card">
+                        <div class="table-responsive">
+                            <table class="table" id="postsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Título</th>
+                                        <th>Data</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="postsTableBody">
+                                    <!-- Os posts serão carregados aqui via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Seção de Eventos -->
+                <section id="events-section" class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Eventos</h2>
+                        <button class="btn btn-primary" id="newEventBtn">
+                            <i class="fas fa-plus"></i> Novo Evento
+                        </button>
+                    </div>
+                    <div class="content-card">
+                        <div class="table-responsive">
+                            <table class="table" id="eventsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Título</th>
+                                        <th>Data</th>
+                                        <th>Horário</th>
+                                        <th>Local</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="eventsTableBody">
+                                    <!-- Os eventos serão carregados aqui via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Seção da Galeria -->
+                <section id="gallery-section" class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Galeria</h2>
+                        <button class="btn btn-primary" id="uploadImageBtn">
+                            <i class="fas fa-upload"></i> Enviar Imagem
+                        </button>
+                    </div>
+                    <div class="content-card">
+                        <div class="gallery-grid" id="galleryGrid">
+                            <!-- As imagens da galeria serão carregadas aqui via JavaScript -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Seção de Depoimentos -->
+                <section id="testimonials-section" class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Depoimentos</h2>
+                        <button class="btn btn-primary" id="newTestimonialBtn">
+                            <i class="fas fa-plus"></i> Novo Depoimento
+                        </button>
+                    </div>
+                    <div class="content-card">
+                        <div class="table-responsive">
+                            <table class="table" id="testimonialsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Cargo</th>
+                                        <th>Depoimento</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="testimonialsTableBody">
+                                    <!-- Os depoimentos serão carregados aqui via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal para Posts -->
+    <div class="modal fade" id="postModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="postModalTitle">Novo Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="postForm">
+                        <input type="hidden" id="postId">
+                        
+                        <div class="mb-3">
+                            <label for="postTitle" class="form-label">Título</label>
+                            <input type="text" class="form-control" id="postTitle" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="postContent" class="form-label">Conteúdo</label>
+                            <textarea class="form-control" id="postContent" rows="10" required></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="postStatus" class="form-label">Status</label>
+                                    <select class="form-select" id="postStatus">
+                                        <option value="draft">Rascunho</option>
+                                        <option value="published">Publicado</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="postDate" class="form-label">Data</label>
+                                    <input type="date" class="form-control" id="postDate">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="postImageFile" class="form-label">Imagem Destacada</label>
+                            <input type="file" class="form-control" id="postImageFile" accept=".jpg,.jpeg,.png">
+                            <div class="image-preview" id="postImagePreview"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="postExcerpt" class="form-label">Resumo</label>
+                            <textarea class="form-control" id="postExcerpt" rows="3" placeholder="Breve descrição do post..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="savePostBtn">Salvar Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Eventos -->
+    <div class="modal fade" id="eventModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventModalTitle">Novo Evento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="eventForm">
+                        <input type="hidden" id="eventId">
+                        
+                        <div class="mb-3">
+                            <label for="eventTitle" class="form-label">Título do Evento</label>
+                            <input type="text" class="form-control" id="eventTitle" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="eventDescription" class="form-label">Descrição</label>
+                            <textarea class="form-control" id="eventDescription" rows="5" required></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="eventDate" class="form-label">Data</label>
+                                    <input type="date" class="form-control" id="eventDate" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="eventTime" class="form-label">Horário</label>
+                                    <input type="text" class="form-control" id="eventTime" placeholder="14:00 - 17:00" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="eventLocation" class="form-label">Local</label>
+                            <input type="text" class="form-control" id="eventLocation" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveEventBtn">Salvar Evento</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Upload de Imagens -->
+    <div class="modal fade" id="galleryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Enviar Imagem</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="galleryForm">
+                        <div class="mb-3">
+                            <label for="galleryImageFile" class="form-label">Selecionar Imagem</label>
+                            <input type="file" class="form-control" id="galleryImageFile" accept=".jpg,.jpeg,.png" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="galleryImageTitle" class="form-label">Título da Imagem</label>
+                            <input type="text" class="form-control" id="galleryImageTitle" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="galleryImageDescription" class="form-label">Descrição</label>
+                            <textarea class="form-control" id="galleryImageDescription" rows="3"></textarea>
+                        </div>
+
+                        <div class="image-preview" id="galleryImagePreview"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveGalleryImageBtn">Enviar Imagem</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Depoimentos -->
+    <div class="modal fade" id="testimonialModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="testimonialModalTitle">Novo Depoimento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="testimonialForm">
+                        <input type="hidden" id="testimonialId">
+                        
+                        <div class="mb-3">
+                            <label for="testimonialName" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="testimonialName" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="testimonialRole" class="form-label">Cargo/Função</label>
+                            <input type="text" class="form-control" id="testimonialRole" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="testimonialText" class="form-label">Depoimento</label>
+                            <textarea class="form-control" id="testimonialText" rows="5" required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="testimonialImageFile" class="form-label">Foto da Pessoa</label>
+                            <input type="file" class="form-control" id="testimonialImageFile" accept=".jpg,.jpeg,.png">
+                            <div class="image-preview" id="testimonialImagePreview"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveTestimonialBtn">Salvar Depoimento</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Excluir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/scripts/admin-script.js"></script>
+</body>
+</html>

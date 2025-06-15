@@ -1,0 +1,577 @@
+/* Variáveis CSS */
+:root {
+  --primary-color: #f15622;
+  --primary-light: #f15622;
+  --primary-dark: #d14419;
+  --secondary-color: #fff4f1;
+  --dark-color: #2c3e50;
+  --light-background: #fffaf9;
+  --accent-color: #ff7a47;
+}
+
+/* Estilos gerais */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Estilos da barra de navegação */
+.navbar {
+  background-color: white !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem 0;
+}
+
+/* Estilos da marca na navbar */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  color: var(--dark-color) !important;
+  font-size: 1.5rem;
+}
+
+/* Estilos do logo */
+.logo-img {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  object-fit: contain;
+}
+
+/* Estilos dos links da navbar */
+.navbar-nav .nav-link {
+  color: var(--dark-color) !important;
+  font-weight: 500;
+  margin: 0 10px;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--primary-color) !important;
+}
+
+/* Seção hero (banner principal) */
+.hero {
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("/assets/grupo-judo.png");
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+}
+
+/* Título do hero */
+.hero h1 {
+  font-size: 4rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+/* Texto do hero */
+.hero p {
+  font-size: 1.3rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Estilos gerais de seção */
+.section {
+  padding: 80px 0;
+}
+
+/* Título das seções */
+.section-title {
+  text-align: center;
+  font-size: 3rem;
+  font-weight: bold;
+  color: var(--dark-color);
+  margin-bottom: 4rem;
+}
+
+/* Seção sobre */
+.about-section {
+  background-color: white;
+}
+
+/* Cards da seção sobre */
+.about-card {
+  background-color: var(--secondary-color);
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  height: 100%;
+  border: none;
+}
+
+.about-card h3 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--dark-color);
+  margin-bottom: 1.5rem;
+}
+
+.about-card p {
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Seção de agenda */
+.agenda-section {
+  background-color: var(--light-background);
+}
+
+/* Cards da agenda */
+.agenda-card {
+  background-color: white;
+  border-radius: 15px;
+  padding: 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+/* Data na agenda */
+.agenda-date {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.agenda-date .day {
+  font-size: 2rem;
+  display: block;
+}
+
+.agenda-date .month {
+  font-size: 1rem;
+}
+
+/* Conteúdo da agenda */
+.agenda-content {
+  padding: 1.5rem;
+}
+
+.agenda-content h4 {
+  color: var(--dark-color);
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.agenda-content p {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+/* Detalhes da agenda */
+.agenda-details {
+  display: flex;
+  justify-content: space-between;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+/* Seção da galeria */
+.gallery-img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.gallery-img:hover {
+  transform: scale(1.05);
+}
+
+/* Seção do blog */
+.blog-section {
+  background-color: var(--light-background);
+}
+
+/* Cards do blog */
+.blog-card {
+  background-color: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.blog-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Imagem do blog */
+.blog-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Conteúdo do blog */
+.blog-content {
+  padding: 1.5rem;
+}
+
+.blog-content h4 {
+  color: var(--dark-color);
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.blog-content p {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+/* Link "Ler mais" */
+.read-more {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.read-more:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+/* Seção de depoimentos */
+.testimonials-section {
+  text-align: center;
+}
+
+/* Cards de depoimentos */
+.testimonial-card {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Imagem do depoimento */
+.testimonial-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 1rem;
+}
+
+/* Texto do depoimento */
+.testimonial-text {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+/* Autor do depoimento */
+.testimonial-author {
+  font-weight: bold;
+  color: var(--dark-color);
+}
+
+/* Cargo do autor */
+.testimonial-role {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+/* Controles do carrossel */
+.carousel-control-prev,
+.carousel-control-next {
+  width: 50px;
+  height: 50px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.carousel-control-prev {
+  left: -100px;
+}
+
+.carousel-control-next {
+  right: -100px;
+}
+
+/* Seção de parceiros */
+.partners-section {
+  background-color: var(--light-background);
+}
+
+/* Cards de parceiros */
+.partner-card {
+  background-color: var(--accent-color);
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.partner-card:hover {
+  transform: scale(1.05);
+}
+
+/* Cores alternadas para os cards */
+.partner-card:nth-child(2) {
+  background-color: #ff6b35;
+}
+
+.partner-card:nth-child(3) {
+  background-color: #f15622;
+}
+
+.partner-card:nth-child(4) {
+  background-color: #d14419;
+}
+
+/* Seção de contato */
+.contact-info {
+  background-color: var(--secondary-color);
+  border-radius: 15px;
+  padding: 2rem;
+}
+
+.contact-info h3 {
+  color: var(--dark-color);
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+/* Itens de contato */
+.contact-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  color: #666;
+}
+
+.contact-item i {
+  margin-right: 1rem;
+  color: var(--primary-color);
+}
+
+/* Botão primário */
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  padding: 12px 30px;
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+/* Rodapé */
+.footer {
+  background-color: var(--dark-color);
+  color: white;
+  padding: 3rem 0 1rem;
+}
+
+.footer h5 {
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+/* Links do rodapé */
+.footer a {
+  color: #bdc3c7;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.footer a:hover {
+  color: white;
+}
+
+/* Ícones sociais */
+.social-icons a {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  color: var(--dark-color);
+  border-radius: 50%;
+  text-align: center;
+  line-height: 40px;
+  margin-right: 10px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.social-icons a:hover {
+  background-color: var(--primary-color);
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Parte inferior do rodapé */
+.footer-bottom {
+  border-top: 1px solid #34495e;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  text-align: center;
+  color: #bdc3c7;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .carousel-control-prev,
+  .carousel-control-next {
+    display: none;
+  }
+
+  .agenda-card {
+    flex-direction: column;
+  }
+
+  .agenda-date {
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .partner-card {
+    font-size: 0.9rem;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+  }
+
+  .section {
+    padding: 60px 0;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+    margin-bottom: 3rem;
+  }
+}
+
+/* Estilos do modal de post do blog */
+.blog-post-meta {
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 15px;
+}
+
+/* Conteúdo do post */
+.blog-post-content {
+  line-height: 1.8;
+}
+
+.blog-post-content h4 {
+  color: var(--dark-color);
+  font-weight: 600;
+  margin: 30px 0 15px;
+  font-size: 1.3rem;
+}
+
+.blog-post-content h5 {
+  color: var(--dark-color);
+  font-weight: 600;
+  margin: 25px 0 12px;
+  font-size: 1.1rem;
+}
+
+.blog-post-content p {
+  margin-bottom: 20px;
+  color: #333;
+  text-align: justify;
+}
+
+.blog-post-content ul {
+  margin: 15px 0 20px 20px;
+}
+
+.blog-post-content li {
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.blog-post-content em {
+  font-style: italic;
+  color: #666;
+}
+
+/* Modal personalizado */
+#blogPostModal .modal-dialog {
+  max-width: 800px;
+}
+
+#blogPostModal .modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+#blogPostModal .modal-content {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+#blogPostModal .modal-header {
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 12px 12px 0 0;
+}
+
+#blogPostModal .modal-header .btn-close {
+  filter: invert(1);
+}
+
+#blogPostModal .modal-title {
+  font-weight: 600;
+}
+
+/* Ajustes responsivos para o modal */
+@media (max-width: 768px) {
+  #blogPostModal .modal-dialog {
+    margin: 10px;
+  }
+
+  #blogPostModal .modal-body {
+    max-height: 60vh;
+    padding: 20px 15px;
+  }
+
+  .blog-post-content h4 {
+    font-size: 1.2rem;
+  }
+
+  .blog-post-content h5 {
+    font-size: 1rem;
+  }
+}

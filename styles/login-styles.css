@@ -1,0 +1,301 @@
+/* Variáveis CSS */
+:root {
+  --primary-color: #f15622;
+  --primary-dark: #d14419;
+  --dark-color: #2c3e50;
+  --light-gray: #f8f9fa;
+  --border-color: #dee2e6;
+  --text-muted: #6c757d;
+  --secondary-color: #fff4f1;
+}
+
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Estilos gerais do corpo */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--light-gray);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Container do login */
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+}
+
+/* Card do login */
+.login-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 40px 30px;
+  text-align: center;
+}
+
+/* Seção da marca */
+.brand-section {
+  margin-bottom: 40px;
+}
+
+/* Logo da marca */
+.brand-section .logo-img {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 15px;
+  object-fit: contain;
+}
+
+/* Nome da marca */
+.brand-name {
+  color: var(--dark-color);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Seção do formulário de login */
+.login-form-section {
+  text-align: left;
+}
+
+/* Título do login */
+.login-title {
+  color: var(--dark-color);
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* Formulário de login */
+.login-form {
+  margin-bottom: 25px;
+}
+
+/* Grupo do formulário */
+.form-group {
+  margin-bottom: 20px;
+}
+
+/* Rótulo do formulário */
+.form-label {
+  color: var(--dark-color);
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Controle do formulário */
+.form-control {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(241, 86, 34, 0.1);
+}
+
+.form-control::placeholder {
+  color: var(--text-muted);
+}
+
+/* Grupo de input de senha */
+.password-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-group .form-control {
+  padding-right: 80px;
+}
+
+/* Botão para mostrar/ocultar senha */
+.password-toggle {
+  position: absolute;
+  right: 15px;
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 500;
+}
+
+.password-toggle:hover {
+  text-decoration: underline;
+}
+
+/* Botão de login */
+.btn-login {
+  width: 100%;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-bottom: 20px;
+}
+
+.btn-login:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.btn-login:active {
+  transform: translateY(0);
+}
+
+/* Links do login */
+.login-links {
+  text-align: center;
+}
+
+/* Link "Esqueci a senha" */
+.forgot-password {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+  color: var(--primary-color);
+}
+
+/* Link para cadastro */
+.signup-link {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.signup-link-text {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.signup-link-text:hover {
+  text-decoration: underline;
+  color: var(--primary-color);
+}
+
+/* Estado de carregamento */
+.btn-login.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-login.loading::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  margin-left: 10px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+/* Animação do spinner */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estados de erro */
+.form-control.error {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+/* Mensagem de erro */
+.error-message {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 5px;
+  display: none;
+}
+
+.error-message.show {
+  display: block;
+}
+
+/* Mensagem de sucesso */
+.success-message {
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  border: 1px solid rgba(241, 86, 34, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 20px;
+  display: none;
+}
+
+.success-message.show {
+  display: block;
+}
+
+/* Design responsivo */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 15px;
+  }
+
+  .login-card {
+    padding: 30px 20px;
+  }
+
+  .brand-name {
+    font-size: 1.3rem;
+  }
+
+  .login-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* Animação de entrada do card */
+.login-card {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,715 @@
+/* Variáveis CSS globais */
+:root {
+  --primary-color: #f15622;
+  --primary-dark: #d14419;
+  --secondary-color: #fff4f1;
+  --dark-color: #2c3e50;
+  --light-background: #fffaf9;
+  --sidebar-width: 250px;
+  --header-height: 70px;
+  --border-color: #dee2e6;
+  --success-color: #28a745;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+  --accent-color: #ff7a47;
+}
+
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Estilos gerais do corpo */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  overflow-x: hidden;
+}
+
+/* Container principal do admin */
+.admin-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cabeçalho do admin */
+.admin-header {
+  background: white;
+  height: var(--header-height);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+/* Lado esquerdo do cabeçalho */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Imagem do logo */
+.header-left .logo-img {
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
+  object-fit: contain;
+}
+
+/* Título do admin */
+.admin-title {
+  color: var(--dark-color);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Centro do cabeçalho (para mobile) */
+.header-center {
+  display: none;
+}
+
+/* Botão para alternar menu mobile */
+.menu-toggle {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--dark-color);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.menu-toggle:hover {
+  background-color: #f8f9fa;
+}
+
+/* Lado direito do cabeçalho */
+.header-right {
+  position: relative;
+}
+
+/* Área do usuário admin */
+.admin-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.admin-user:hover {
+  background-color: #f8f9fa;
+}
+
+/* Nome do admin */
+.admin-name {
+  color: var(--dark-color);
+  font-weight: 500;
+}
+
+/* Avatar do admin */
+.admin-avatar {
+  width: 35px;
+  height: 35px;
+  background-color: #6c757d;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+/* Menu dropdown */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 180px;
+  padding: 8px 0;
+  display: none;
+  z-index: 1001;
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+/* Itens do dropdown */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  color: var(--dark-color);
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: var(--dark-color);
+}
+
+/* Divisor do dropdown */
+.dropdown-divider {
+  margin: 8px 0;
+  border-color: var(--border-color);
+}
+
+/* Corpo principal do admin */
+.admin-body {
+  display: flex;
+  margin-top: var(--header-height);
+  min-height: calc(100vh - var(--header-height));
+}
+
+/* Barra lateral */
+.admin-sidebar {
+  width: var(--sidebar-width);
+  background: white;
+  border-right: 1px solid var(--border-color);
+  position: fixed;
+  left: 0;
+  top: var(--header-height);
+  height: calc(100vh - var(--header-height));
+  overflow-y: auto;
+  transition: transform 0.3s ease;
+}
+
+/* Navegação da sidebar */
+.sidebar-nav {
+  padding: 20px 0;
+}
+
+/* Lista de navegação */
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Itens da navegação */
+.nav-item {
+  margin-bottom: 5px;
+}
+
+/* Links da navegação */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  color: var(--dark-color);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-right: 3px solid transparent;
+}
+
+.nav-link:hover {
+  background-color: #f8f9fa;
+  color: var(--primary-color);
+}
+
+/* Item de navegação ativo */
+.nav-item.active .nav-link {
+  background-color: var(--primary-color);
+  color: white;
+  border-right-color: var(--primary-dark);
+}
+
+/* Ícones da navegação */
+.nav-link i {
+  width: 20px;
+  text-align: center;
+}
+
+/* Conteúdo principal */
+.admin-main {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  padding: 30px;
+  background-color: var(--light-background);
+  min-height: calc(100vh - var(--header-height));
+}
+
+/* Seções de conteúdo */
+.content-section {
+  display: none;
+}
+
+.content-section.active {
+  display: block;
+}
+
+/* Cabeçalho das seções */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+/* Título das seções */
+.section-title {
+  color: var(--dark-color);
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Cards de conteúdo */
+.content-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos de tabela */
+.table {
+  margin: 0;
+}
+
+/* Cabeçalho da tabela */
+.table th {
+  border-top: none;
+  border-bottom: 2px solid var(--border-color);
+  font-weight: 600;
+  color: var(--dark-color);
+  padding: 15px 12px;
+}
+
+/* Células da tabela */
+.table td {
+  padding: 15px 12px;
+  vertical-align: middle;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+/* Efeito hover nas linhas da tabela */
+.table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* Badges de status */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: lowercase;
+}
+
+/* Status publicado */
+.status-published,
+.status-publicado {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+/* Status rascunho */
+.status-draft,
+.status-rascunho {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* Botões de ação */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* Botões pequenos */
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.875rem;
+}
+
+/* Botão editar */
+.btn-edit {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.btn-edit:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+  color: white;
+}
+
+/* Botão deletar */
+.btn-delete {
+  background-color: var(--danger-color);
+  border-color: var(--danger-color);
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+  border-color: #c82333;
+  color: white;
+}
+
+/* Botão primário */
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  padding: 10px 20px;
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+/* Estilos de modal */
+.modal-content {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Cabeçalho do modal */
+.modal-header {
+  border-bottom: 1px solid var(--border-color);
+  padding: 20px 25px;
+}
+
+/* Corpo do modal */
+.modal-body {
+  padding: 25px;
+}
+
+/* Rodapé do modal */
+.modal-footer {
+  border-top: 1px solid var(--border-color);
+  padding: 20px 25px;
+}
+
+/* Estilos de formulário */
+.form-label {
+  font-weight: 500;
+  color: var(--dark-color);
+  margin-bottom: 8px;
+}
+
+/* Controles de formulário */
+.form-control,
+.form-select {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px 15px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(241, 86, 34, 0.1);
+}
+
+/* Estilos da galeria */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+/* Itens da galeria */
+.gallery-item {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: translateY(-5px);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Overlay dos itens da galeria */
+.gallery-item-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.7));
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 15px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gallery-item:hover .gallery-item-overlay {
+  opacity: 1;
+}
+
+/* Título do item da galeria */
+.gallery-item-title {
+  color: white;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+/* Ações do item da galeria */
+.gallery-item-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.gallery-item-actions .btn {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+}
+
+/* Pré-visualização de imagens */
+.image-preview {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos de upload de arquivo */
+.form-control[type="file"] {
+  padding: 8px 12px;
+}
+
+.form-control[type="file"]::-webkit-file-upload-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.form-control[type="file"]::-webkit-file-upload-button:hover {
+  background-color: var(--primary-dark);
+}
+
+/* Estilos de depoimentos */
+.testimonial-preview {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.testimonial-preview img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.testimonial-preview-content {
+  flex: 1;
+}
+
+.testimonial-preview-name {
+  font-weight: 600;
+  color: var(--dark-color);
+}
+
+.testimonial-preview-role {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.testimonial-preview-text {
+  color: #495057;
+  font-style: italic;
+  margin-top: 5px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Estilos de eventos */
+.event-date-badge {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+  min-width: 80px;
+}
+
+/* Estado vazio */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6c757d;
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  margin-bottom: 10px;
+  color: var(--dark-color);
+}
+
+/* Estados de carregamento */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Spinner de carregamento */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Design responsivo */
+@media (max-width: 768px) {
+  .header-center {
+    display: block;
+  }
+
+  .admin-title {
+    display: none;
+  }
+
+  .admin-sidebar {
+    transform: translateX(-100%);
+  }
+
+  .admin-sidebar.show {
+    transform: translateX(0);
+  }
+
+  .admin-main {
+    margin-left: 0;
+    padding: 20px 15px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+  }
+
+  .gallery-item img {
+    height: 150px;
+  }
+
+  .testimonial-preview {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .admin-header {
+    padding: 0 15px;
+  }
+
+  .content-card {
+    padding: 20px 15px;
+  }
+
+  .table-responsive {
+    font-size: 0.875rem;
+  }
+
+  .modal-dialog {
+    margin: 10px;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+  }
+
+  .gallery-item img {
+    height: 120px;
+  }
+}
+
+/* Animação para novos itens */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
