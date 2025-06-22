@@ -41,11 +41,6 @@ function initializeAdminPanel() {
   document.getElementById("eventDate").value = today
 }
 
-// Carregar todos os dados
-function loadAllData() {
-  renderAllSections()
-}
-
 // Renderizar todas as seções
 function renderAllSections() {
   renderPosts()
@@ -62,6 +57,27 @@ function setupEventListeners() {
   setupEventManagement()
   setupModalEvents()
   setupFileUploads()
+
+  document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.btn-edit, .btn-delete, .btn-view');
+    if (!btn) return;
+    
+    const id = btn.dataset.id;
+    const type = btn.dataset.type;
+    
+    if (btn.classList.contains('btn-edit')) {
+      if (type === 'post') editPost(id);
+      if (type === 'event') editEvent(id);
+    }
+    
+    if (btn.classList.contains('btn-delete')) {
+      deleteItem(type, id);
+    }
+    
+    if (btn.classList.contains('btn-view')) {
+      viewContactMessage(id);
+    }
+  });
 }
 
 // Configurar navegação
@@ -214,28 +230,22 @@ function renderPosts() {
     return;
   }
 
-  tbody.innerHTML = posts
-    .map(
-      (post) => `
+  tbody.innerHTML = posts.map(post => `
     <tr>
-      <td>
-        <div class="post-title">${post.title}</div>
-      </td>
+      <td>${post.title}</td>
       <td>${formatDate(post.date)}</td>
       <td>
         <div class="action-buttons">
-          <button class="btn btn-edit btn-sm" onclick="editPost(${post.id})">
+          <button class="btn btn-edit btn-sm" data-id="${post.id}" data-type="post">
             Editar
           </button>
-          <button class="btn btn-delete btn-sm" onclick="deleteItem('post', ${post.id})">
+          <button class="btn btn-delete btn-sm" data-id="${post.id}" data-type="post">
             Excluir
           </button>
         </div>
       </td>
     </tr>
-  `
-    )
-    .join("");
+  `).join("");
 }
 
 // Renderizar eventos
@@ -298,6 +308,25 @@ function renderContacts() {
       </tr>
     `;
     return;
+
+    tbody.innerHTML = contacts.map(contact => `
+    <tr>
+      <td>${contact.name}</td>
+      <td>${contact.email}</td>
+      <td>${contact.message.substring(0, 50)}...</td>
+      <td>${formatDate(contact.date)}</td>
+      <td>
+        <div class="action-buttons">
+          <button class="btn btn-view btn-sm" data-id="${contact.id}" data-type="contact">
+            <i class="fas fa-eye"></i>
+          </button>
+          <button class="btn btn-delete btn-sm" data-id="${contact.id}" data-type="contact">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join("");
   }
 
   tbody.innerHTML = contacts
