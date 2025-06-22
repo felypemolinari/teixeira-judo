@@ -1,3 +1,5 @@
+import { apiService } from './api-service.js';
+
 document.addEventListener("DOMContentLoaded", () => {
   // Inicializar funcionalidades de login
   initPasswordToggle()
@@ -33,39 +35,31 @@ function initLoginForm() {
 }
 
 // Processar submissão do login
-function handleLogin() {
-  const email = document.getElementById("email").value
-  const password = document.getElementById("password").value
-  const submitButton = document.querySelector(".btn-login")
+async function handleLogin() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const submitButton = document.querySelector(".btn-login");
 
-  // Limpar erros anteriores
-  clearErrors()
+  clearErrors();
 
-  // Validar formulário
   if (!validateForm(email, password)) {
-    return
+    return;
   }
 
-  // Mostrar estado de carregamento
-  showLoading(submitButton)
+  showLoading(submitButton);
 
-  // Simular processo de login (apenas para demonstração)
-  setTimeout(() => {
-    // Esconder estado de carregamento
-    hideLoading(submitButton)
-
-    // Verificar credenciais (apenas para demonstração)
-    if (email === "admin@teixeirajudo.com" && password === "123456") {
-      showSuccess("Login realizado com sucesso!")
-
-      // Redirecionar após sucesso
-      setTimeout(() => {
-        window.location.href = "admin.html" // Redirecionar para painel administrativo
-      }, 1500)
-    } else {
-      showError("Email ou senha incorretos. Tente novamente.")
-    }
-  }, 2000)
+  try {
+    const data = await apiService.login(email, password);
+    localStorage.setItem('authToken', data.token);
+    showSuccess("Login realizado com sucesso!");
+    
+    setTimeout(() => {
+      window.location.href = "admin.html";
+    }, 1500);
+  } catch (error) {
+    hideLoading(submitButton);
+    showError(error.message || "Email ou senha incorretos. Tente novamente.");
+  }
 }
 
 // Validação do formulário

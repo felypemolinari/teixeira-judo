@@ -1,116 +1,44 @@
+import { apiService } from './api-service.js';
+
 // Variáveis globais
 let posts = []
 let events = []
-let galleryImages = []
-let testimonials = []
 let currentEditingItem = null
 let currentSection = "posts"
+let contacts = []
 
 // Inicializar painel administrativo
-document.addEventListener("DOMContentLoaded", () => {
-  initializeAdminPanel()
-  loadAllData()
-  setupEventListeners()
-})
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    // Verificar autenticação
+    await apiService.verifyToken();
+    initializeAdminPanel();
+    loadAllData();
+    setupEventListeners();
+  } catch (error) {
+    console.error('Falha na autenticação:', error);
+    window.location.href = 'login.html';
+  }
+});
+
+// Carregar todos os dados
+async function loadAllData() {
+  try {
+    posts = await apiService.getPosts();
+    events = await apiService.getEvents();
+    contacts = await apiService.getContacts();
+    renderAllSections();
+  } catch (error) {
+    console.error('Erro ao carregar dados:', error);
+    showAlert('Erro ao carregar dados', 'error');
+  }
+}
 
 // Inicializar painel administrativo
 function initializeAdminPanel() {
-  // Definir data atual como padrão para novos posts e eventos
   const today = new Date().toISOString().split("T")[0]
   document.getElementById("postDate").value = today
   document.getElementById("eventDate").value = today
-
-  // Carregar dados iniciais
-  loadSampleData()
-}
-
-// Carregar dados de exemplo
-function loadSampleData() {
-  // Posts de exemplo
-  posts = [
-    {
-      id: 1,
-      title: "Como o projeto tem transformado vidas",
-      content:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      excerpt:
-        "Descubra como nosso projeto social tem impactado positivamente a vida de centenas de pessoas através do judô.",
-      date: "2024-01-15",
-      status: "published",
-      image: "/placeholder.svg?height=200&width=400",
-      author: "Admin",
-    },
-    {
-      id: 2,
-      title: "Resultados do último evento",
-      content: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
-      excerpt: "Confira os resultados e destaques do nosso último evento de judô realizado no centro comunitário.",
-      date: "2024-01-10",
-      status: "draft",
-      image: "/placeholder.svg?height=200&width=400",
-      author: "Admin",
-    },
-  ]
-
-  // Eventos de exemplo
-  events = [
-    {
-      id: 1,
-      title: "Workshop de Desenvolvimento Pessoal",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      date: "2024-06-15",
-      time: "14:00 - 17:00",
-      location: "Centro Comunitário",
-    },
-    {
-      id: 2,
-      title: "Palestra Motivacional",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      date: "2024-06-22",
-      time: "19:00 - 21:00",
-      location: "Auditório Principal",
-    },
-  ]
-
-  // Imagens da galeria de exemplo
-  galleryImages = [
-    {
-      id: 1,
-      title: "Treino de Judô - Crianças",
-      description: "Aula de judô para crianças no dojo principal",
-      image: "/placeholder.svg?height=250&width=400",
-      uploadDate: "2024-01-15",
-    },
-    {
-      id: 2,
-      title: "Competição Regional",
-      description: "Participação na competição regional de judô",
-      image: "/placeholder.svg?height=250&width=400",
-      uploadDate: "2024-01-10",
-    },
-  ]
-
-  // Depoimentos de exemplo
-  testimonials = [
-    {
-      id: 1,
-      name: "Rodrigo da Silva",
-      role: "Participante",
-      text: "Uma experiência transformadora que mudou minha perspectiva.",
-      image: "/placeholder.svg?height=100&width=100",
-    },
-    {
-      id: 2,
-      name: "Maria Santos",
-      role: "Mãe de Aluno",
-      text: "Meu filho desenvolveu disciplina e respeito através do judô.",
-      image: "/placeholder.svg?height=100&width=100",
-    },
-  ]
-
-  renderAllSections()
 }
 
 // Carregar todos os dados
@@ -122,8 +50,7 @@ function loadAllData() {
 function renderAllSections() {
   renderPosts()
   renderEvents()
-  renderGallery()
-  renderTestimonials()
+  renderContacts()
 }
 
 // Configurar listeners de eventos
@@ -133,8 +60,6 @@ function setupEventListeners() {
   setupMobileMenu()
   setupPostManagement()
   setupEventManagement()
-  setupGalleryManagement()
-  setupTestimonialManagement()
   setupModalEvents()
   setupFileUploads()
 }
@@ -170,17 +95,24 @@ function showSection(sectionName) {
 
 // Configurar dropdown do usuário
 function setupUserDropdown() {
-  const adminUser = document.querySelector(".admin-user")
-  const dropdown = document.getElementById("userDropdown")
+  const adminUser = document.querySelector(".admin-user");
+  const dropdown = document.getElementById("userDropdown");
 
   adminUser.addEventListener("click", (e) => {
-    e.stopPropagation()
-    dropdown.classList.toggle("show")
-  })
+    e.stopPropagation();
+    dropdown.classList.toggle("show");
+  });
 
   document.addEventListener("click", () => {
-    dropdown.classList.remove("show")
-  })
+    dropdown.classList.remove("show");
+  });
+
+  // Adicionar logout
+  document.querySelector('[href="index.html"]').addEventListener('click', (e) => {
+    e.preventDefault();
+    localStorage.removeItem('authToken');
+    window.location.href = 'index.html';
+  });
 }
 
 // Configurar menu mobile
@@ -223,31 +155,9 @@ function setupEventManagement() {
   })
 }
 
-// Configurar gerenciamento da galeria
-function setupGalleryManagement() {
-  document.getElementById("uploadImageBtn").addEventListener("click", () => {
-    openGalleryModal()
-  })
-
-  document.getElementById("saveGalleryImageBtn").addEventListener("click", () => {
-    saveGalleryImage()
-  })
-}
-
-// Configurar gerenciamento de depoimentos
-function setupTestimonialManagement() {
-  document.getElementById("newTestimonialBtn").addEventListener("click", () => {
-    openTestimonialModal()
-  })
-
-  document.getElementById("saveTestimonialBtn").addEventListener("click", () => {
-    saveTestimonial()
-  })
-}
-
 // Configurar eventos dos modais
 function setupModalEvents() {
-  const modals = ["postModal", "eventModal", "galleryModal", "testimonialModal"]
+  const modals = ["postModal", "eventModal"]
 
   modals.forEach((modalId) => {
     const modal = document.getElementById(modalId)
@@ -264,8 +174,6 @@ function setupModalEvents() {
 // Configurar uploads de arquivos
 function setupFileUploads() {
   setupImagePreview("postImageFile", "postImagePreview")
-  setupImagePreview("galleryImageFile", "galleryImagePreview")
-  setupImagePreview("testimonialImageFile", "testimonialImagePreview")
 }
 
 // Configurar pré-visualização de imagem
@@ -289,12 +197,12 @@ function setupImagePreview(inputId, previewId) {
 
 // Renderizar posts
 function renderPosts() {
-  const tbody = document.getElementById("postsTableBody")
+  const tbody = document.getElementById("postsTableBody");
 
   if (posts.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="4" class="text-center py-5">
+        <td colspan="3" class="text-center py-5"> <!-- Ajustado de 4 para 3 colunas -->
           <div class="empty-state">
             <i class="fas fa-blog"></i>
             <h3>Nenhum post ainda</h3>
@@ -302,8 +210,8 @@ function renderPosts() {
           </div>
         </td>
       </tr>
-    `
-    return
+    `;
+    return;
   }
 
   tbody.innerHTML = posts
@@ -315,11 +223,6 @@ function renderPosts() {
       </td>
       <td>${formatDate(post.date)}</td>
       <td>
-        <span class="status-badge status-${post.status === "published" ? "publicado" : "rascunho"}">
-          ${post.status === "published" ? "Publicado" : "Rascunho"}
-        </span>
-      </td>
-      <td>
         <div class="action-buttons">
           <button class="btn btn-edit btn-sm" onclick="editPost(${post.id})">
             Editar
@@ -330,9 +233,9 @@ function renderPosts() {
         </div>
       </td>
     </tr>
-  `,
+  `
     )
-    .join("")
+    .join("");
 }
 
 // Renderizar eventos
@@ -373,96 +276,100 @@ function renderEvents() {
         </div>
       </td>
     </tr>
-  `,
+  `
     )
     .join("")
 }
 
-// Renderizar galeria
-function renderGallery() {
-  const grid = document.getElementById("galleryGrid")
+// Renderizar contatos
+function renderContacts() {
+  const tbody = document.getElementById("contactTableBody");
 
-  if (galleryImages.length === 0) {
-    grid.innerHTML = `
-      <div class="col-12">
-        <div class="empty-state">
-          <i class="fas fa-images"></i>
-          <h3>Nenhuma imagem ainda</h3>
-          <p>Envie sua primeira imagem para a galeria.</p>
-        </div>
-      </div>
-    `
-    return
-  }
-
-  grid.innerHTML = galleryImages
-    .map(
-      (image) => `
-  <div class="gallery-item fade-in">
-    <img src="${image.image}" alt="${image.title}">
-    <div class="gallery-item-overlay">
-      <div class="gallery-item-title">${image.title}</div>
-      <div class="gallery-item-actions">
-        <button class="btn btn-delete btn-sm" onclick="deleteItem('gallery', ${image.id})">
-          Excluir
-        </button>
-      </div>
-    </div>
-  </div>
-`,
-    )
-    .join("")
-}
-
-// Renderizar depoimentos
-function renderTestimonials() {
-  const tbody = document.getElementById("testimonialsTableBody")
-
-  if (testimonials.length === 0) {
+  if (contacts.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="4" class="text-center py-5">
+        <td colspan="5" class="text-center py-5"> <!-- Ajustado de 6 para 5 colunas -->
           <div class="empty-state">
-            <i class="fas fa-quote-left"></i>
-            <h3>Nenhum depoimento ainda</h3>
-            <p>Adicione o primeiro depoimento.</p>
+            <i class="fas fa-envelope"></i>
+            <h3>Nenhuma mensagem recebida</h3>
+            <p>Todas as mensagens de contato aparecerão aqui.</p>
+          </div>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = contacts
+    .map(
+      (contact) => `
+      <tr>
+        <td>${contact.name}</td>
+        <td>${contact.email}</td>
+        <td class="message-preview">${contact.message.substring(0, 50)}${contact.message.length > 50 ? '...' : ''}</td>
+        <td>${formatDate(contact.date)}</td>
+        <td>
+          <div class="action-buttons">
+            <button class="btn btn-view btn-sm" onclick="viewContactMessage(${contact.id})">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="btn btn-delete btn-sm" onclick="deleteItem('contact', ${contact.id})">
+              <i class="fas fa-trash"></i>
+            </button>
           </div>
         </td>
       </tr>
     `
-    return
-  }
-
-  tbody.innerHTML = testimonials
-    .map(
-      (testimonial) => `
-    <tr>
-      <td>
-        <div class="testimonial-preview">
-          <img src="${testimonial.image}" alt="${testimonial.name}">
-          <div class="testimonial-preview-content">
-            <div class="testimonial-preview-name">${testimonial.name}</div>
-          </div>
-        </div>
-      </td>
-      <td>${testimonial.role}</td>
-      <td>
-        <div class="testimonial-preview-text">${testimonial.text}</div>
-      </td>
-      <td>
-        <div class="action-buttons">
-          <button class="btn btn-edit btn-sm" onclick="editTestimonial(${testimonial.id})">
-            Editar
-          </button>
-          <button class="btn btn-delete btn-sm" onclick="deleteItem('testimonial', ${testimonial.id})">
-            Excluir
-          </button>
-        </div>
-      </td>
-    </tr>
-  `,
     )
-    .join("")
+    .join("");
+}
+
+function viewContactMessage(id) {
+    const contact = contacts.find(c => c.id == id)
+    if (!contact) return
+
+    // Marcar como lida se ainda não estiver
+    if (contact.status === 'unread') {
+        contact.status = 'read'
+        renderContacts()
+    }
+
+    // Mostrar modal com a mensagem completa
+    const modal = new bootstrap.Modal(document.createElement('div'))
+    modal._element.innerHTML = `
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mensagem de ${contact.name}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Email:</strong> ${contact.email}</p>
+                    <p><strong>Data:</strong> ${formatDate(contact.date)}</p>
+                    <hr>
+                    <p>${contact.message}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" onclick="replyToContact('${contact.email}')">Responder</button>
+                </div>
+            </div>
+        </div>
+    `
+    document.body.appendChild(modal._element)
+    modal.show()
+}
+
+function toggleReadStatus(id) {
+    const contact = contacts.find(c => c.id == id)
+    if (contact) {
+        contact.status = contact.status === 'read' ? 'unread' : 'read'
+        renderContacts()
+    }
+}
+
+function replyToContact(email) {
+    window.open(`mailto:${email}`, '_blank')
 }
 
 // Formatar data
@@ -506,29 +413,6 @@ function openEventModal(event = null) {
   modal.show()
 }
 
-function openGalleryModal() {
-  const modal = new bootstrap.Modal(document.getElementById("galleryModal"))
-  resetForm("gallery")
-  modal.show()
-}
-
-function openTestimonialModal(testimonial = null) {
-  const modal = new bootstrap.Modal(document.getElementById("testimonialModal"))
-  const modalTitle = document.getElementById("testimonialModalTitle")
-
-  if (testimonial) {
-    modalTitle.textContent = "Editar Depoimento"
-    fillTestimonialForm(testimonial)
-    currentEditingItem = testimonial
-  } else {
-    modalTitle.textContent = "Novo Depoimento"
-    resetForm("testimonial")
-    currentEditingItem = null
-  }
-
-  modal.show()
-}
-
 // Funções para preencher formulários
 function fillPostForm(post) {
   document.getElementById("postId").value = post.id
@@ -552,35 +436,20 @@ function fillEventForm(event) {
   document.getElementById("eventLocation").value = event.location
 }
 
-function fillTestimonialForm(testimonial) {
-  document.getElementById("testimonialId").value = testimonial.id
-  document.getElementById("testimonialName").value = testimonial.name
-  document.getElementById("testimonialRole").value = testimonial.role
-  document.getElementById("testimonialText").value = testimonial.text
-
-  if (testimonial.image) {
-    document.getElementById("testimonialImagePreview").innerHTML = `<img src="${testimonial.image}" alt="Preview">`
-  }
-}
-
 // Funções para resetar formulários
 function resetForm(type) {
   const forms = {
     post: "postForm",
     event: "eventForm",
-    gallery: "galleryForm",
-    testimonial: "testimonialForm",
   }
 
   const form = document.getElementById(forms[type])
   if (form) {
     form.reset()
 
-    // Limpar pré-visualizações
     const previews = form.querySelectorAll(".image-preview")
     previews.forEach((preview) => (preview.innerHTML = ""))
 
-    // Definir datas padrão
     if (type === "post" || type === "event") {
       const today = new Date().toISOString().split("T")[0]
       const dateField = document.getElementById(`${type}Date`)
@@ -592,138 +461,69 @@ function resetForm(type) {
 }
 
 // Funções de salvamento
-function savePost() {
-  const form = document.getElementById("postForm")
+async function savePost() {
+  const form = document.getElementById("postForm");
   if (!form.checkValidity()) {
-    form.reportValidity()
-    return
-  }
-
-  const fileInput = document.getElementById("postImageFile")
-  let imageUrl = currentEditingItem?.image || "/placeholder.svg?height=200&width=400"
-
-  if (fileInput.files[0]) {
-    imageUrl = URL.createObjectURL(fileInput.files[0])
+    form.reportValidity();
+    return;
   }
 
   const postData = {
-    id: document.getElementById("postId").value || Date.now(),
     title: document.getElementById("postTitle").value,
     content: document.getElementById("postContent").value,
     status: document.getElementById("postStatus").value,
     date: document.getElementById("postDate").value,
-    image: imageUrl,
     excerpt: document.getElementById("postExcerpt").value,
     author: "Admin",
+  };
+
+  try {
+    saveWithLoading("savePostBtn", "Salvando...", async () => {
+      if (currentEditingItem) {
+        await apiService.updatePost(currentEditingItem.id, postData);
+      } else {
+        await apiService.createPost(postData);
+      }
+      await loadAllData();
+      closeModal("postModal");
+      showAlert("Post salvo com sucesso!", "success");
+    });
+  } catch (error) {
+    console.error('Erro ao salvar post:', error);
+    showAlert('Erro ao salvar post', 'error');
   }
-
-  saveWithLoading("savePostBtn", "Salvando...", () => {
-    if (currentEditingItem) {
-      const index = posts.findIndex((p) => p.id == postData.id)
-      if (index !== -1) posts[index] = postData
-    } else {
-      posts.unshift(postData)
-    }
-
-    renderPosts()
-    closeModal("postModal")
-    showAlert("Post salvo com sucesso!", "success")
-  })
 }
 
-function saveEvent() {
-  const form = document.getElementById("eventForm")
+async function saveEvent() {
+  const form = document.getElementById("eventForm");
   if (!form.checkValidity()) {
-    form.reportValidity()
-    return
+    form.reportValidity();
+    return;
   }
 
   const eventData = {
-    id: document.getElementById("eventId").value || Date.now(),
     title: document.getElementById("eventTitle").value,
     description: document.getElementById("eventDescription").value,
     date: document.getElementById("eventDate").value,
     time: document.getElementById("eventTime").value,
     location: document.getElementById("eventLocation").value,
+  };
+
+  try {
+    saveWithLoading("saveEventBtn", "Salvando...", async () => {
+      if (currentEditingItem) {
+        await apiService.updateEvent(currentEditingItem.id, eventData);
+      } else {
+        await apiService.createEvent(eventData);
+      }
+      await loadAllData();
+      closeModal("eventModal");
+      showAlert("Evento salvo com sucesso!", "success");
+    });
+  } catch (error) {
+    console.error('Erro ao salvar evento:', error);
+    showAlert('Erro ao salvar evento', 'error');
   }
-
-  saveWithLoading("saveEventBtn", "Salvando...", () => {
-    if (currentEditingItem) {
-      const index = events.findIndex((e) => e.id == eventData.id)
-      if (index !== -1) events[index] = eventData
-    } else {
-      events.unshift(eventData)
-    }
-
-    renderEvents()
-    closeModal("eventModal")
-    showAlert("Evento salvo com sucesso!", "success")
-  })
-}
-
-function saveGalleryImage() {
-  const form = document.getElementById("galleryForm")
-  if (!form.checkValidity()) {
-    form.reportValidity()
-    return
-  }
-
-  const fileInput = document.getElementById("galleryImageFile")
-  if (!fileInput.files[0]) {
-    showAlert("Por favor, selecione uma imagem.", "error")
-    return
-  }
-
-  const imageData = {
-    id: Date.now(),
-    title: document.getElementById("galleryImageTitle").value,
-    description: document.getElementById("galleryImageDescription").value,
-    image: URL.createObjectURL(fileInput.files[0]),
-    uploadDate: new Date().toISOString().split("T")[0],
-  }
-
-  saveWithLoading("saveGalleryImageBtn", "Enviando...", () => {
-    galleryImages.unshift(imageData)
-    renderGallery()
-    closeModal("galleryModal")
-    showAlert("Imagem enviada com sucesso!", "success")
-  })
-}
-
-function saveTestimonial() {
-  const form = document.getElementById("testimonialForm")
-  if (!form.checkValidity()) {
-    form.reportValidity()
-    return
-  }
-
-  const fileInput = document.getElementById("testimonialImageFile")
-  let imageUrl = currentEditingItem?.image || "/placeholder.svg?height=100&width=100"
-
-  if (fileInput.files[0]) {
-    imageUrl = URL.createObjectURL(fileInput.files[0])
-  }
-
-  const testimonialData = {
-    id: document.getElementById("testimonialId").value || Date.now(),
-    name: document.getElementById("testimonialName").value,
-    role: document.getElementById("testimonialRole").value,
-    text: document.getElementById("testimonialText").value,
-    image: imageUrl,
-  }
-
-  saveWithLoading("saveTestimonialBtn", "Salvando...", () => {
-    if (currentEditingItem) {
-      const index = testimonials.findIndex((t) => t.id == testimonialData.id)
-      if (index !== -1) testimonials[index] = testimonialData
-    } else {
-      testimonials.unshift(testimonialData)
-    }
-
-    renderTestimonials()
-    closeModal("testimonialModal")
-    showAlert("Depoimento salvo com sucesso!", "success")
-  })
 }
 
 // Funções de edição
@@ -745,35 +545,33 @@ function deleteItem(type, id) {
   modal.show()
 }
 
-function confirmDelete() {
-  if (!currentEditingItem) return
+async function confirmDelete() {
+  if (!currentEditingItem) return;
 
-  const { type, id } = currentEditingItem
+  const { type, id } = currentEditingItem;
 
-  saveWithLoading("confirmDeleteBtn", "Excluindo...", () => {
-    switch (type) {
-      case "post":
-        posts = posts.filter((p) => p.id !== id)
-        renderPosts()
-        break
-      case "event":
-        events = events.filter((e) => e.id !== id)
-        renderEvents()
-        break
-      case "gallery":
-        galleryImages = galleryImages.filter((g) => g.id !== id)
-        renderGallery()
-        break
-      case "testimonial":
-        testimonials = testimonials.filter((t) => t.id !== id)
-        renderTestimonials()
-        break
-    }
-
-    closeModal("deleteModal")
-    showAlert("Item excluído com sucesso!", "success")
-    currentEditingItem = null
-  })
+  try {
+    saveWithLoading("confirmDeleteBtn", "Excluindo...", async () => {
+      switch (type) {
+        case "post":
+          await apiService.deletePost(id);
+          break;
+        case "event":
+          await apiService.deleteEvent(id);
+          break;
+        case "contact":
+          await apiService.deleteContact(id);
+          break;
+      }
+      await loadAllData();
+      closeModal("deleteModal");
+      showAlert("Item excluído com sucesso!", "success");
+      currentEditingItem = null;
+    });
+  } catch (error) {
+    console.error('Erro ao excluir:', error);
+    showAlert('Erro ao excluir item', 'error');
+  }
 }
 
 // Funções utilitárias

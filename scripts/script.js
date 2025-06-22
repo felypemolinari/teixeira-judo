@@ -1,3 +1,5 @@
+import { apiService } from './api-service.js';
+
 // Quando o conteúdo DOM estiver carregado
 document.addEventListener("DOMContentLoaded", () => {
   // Inicializar todas as funcionalidades
@@ -6,6 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initContactForm()
   initCarousel()
   initGalleryHover()
+  loadBlogPosts()
+  loadEvents()
 })
 
 // Rolagem suave para links de navegação
@@ -42,34 +46,111 @@ function initNavbarScroll() {
 
 // Manipulação do formulário de contato
 function initContactForm() {
-  const contactForm = document.getElementById("contactForm")
+  const contactForm = document.getElementById("contactForm");
 
   if (contactForm) {
-    contactForm.addEventListener("submit", function (e) {
-      e.preventDefault()
+    contactForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-      // Obter dados do formulário
-      const formData = new FormData(this)
-      const name = formData.get("name") || document.getElementById("name").value
-      const email = formData.get("email") || document.getElementById("email").value
-      const message = formData.get("message") || document.getElementById("message").value
+      const formData = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        message: document.getElementById("message").value
+      };
 
       // Validação básica
-      if (!name || !email || !message) {
-        showAlert("Por favor, preencha todos os campos.", "error")
-        return
+      if (!formData.name || !formData.email || !formData.message) {
+        showAlert("Por favor, preencha todos os campos.", "error");
+        return;
       }
 
-      if (!isValidEmail(email)) {
-        showAlert("Por favor, insira um email válido.", "error")
-        return
+      if (!isValidEmail(formData.email)) {
+        showAlert("Por favor, insira um email válido.", "error");
+        return;
       }
 
-      // Simular envio do formulário
-      showAlert("Mensagem enviada com sucesso! Entraremos em contato em breve.", "success")
-      this.reset()
-    })
+      try {
+        await apiService.sendContactForm(formData);
+        showAlert("Mensagem enviada com sucesso! Entraremos em contato em breve.", "success");
+        this.reset();
+      } catch (error) {
+        showAlert("Ocorreu um erro ao enviar sua mensagem. Tente novamente mais tarde.", "error");
+      }
+    });
   }
+}
+
+async function loadBlogPosts() {
+  try {
+    const posts = await apiService.getPosts();
+    renderBlogPosts(posts.filter(post => post.status === 'published'));
+  } catch (error) {
+    console.error('Erro ao carregar posts:', error);
+  }
+}
+
+async function loadEvents() {
+  try {
+    const events = await apiService.getEvents();
+    renderEvents(events);
+  } catch (error) {
+    console.error('Erro ao carregar eventos:', error);
+  }
+}
+
+function renderBlogPosts(posts) {
+  const blogContainer = document.querySelector('#blog .row');
+  if (!blogContainer) return;
+  
+  blogContainer.innerHTML = posts.map(post => `
+    <div class="col-lg-4 mb-4">
+      <div class="blog-card">
+        <img src="${post.image}" alt="${post.title}" class="blog-img">
+        <div class="blog-content">
+          <h4>${post.title}</h4>
+          <p>${post.excerpt}</p>
+          <a href="#" class="read-more" data-id="${post.id}">Ler mais</a>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Adiciona event listeners
+  document.querySelectorAll('.read-more').forEach(link => {
+    link.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const postId = link.getAttribute('data-id');
+      const post = posts.find(p => p.id == postId);
+      if (post) openBlogPostModal(post);
+    });
+  });
+}
+
+function renderEvents(events) {
+  const agendaContainer = document.querySelector('#agenda .row');
+  if (!agendaContainer) return;
+  
+  agendaContainer.innerHTML = events.map(event => {
+    const eventDate = new Date(event.date);
+    return `
+      <div class="col-lg-6 mb-4">
+        <div class="agenda-card d-flex">
+          <div class="agenda-date">
+            <span class="day">${eventDate.getDate()}</span>
+            <span class="month">${eventDate.toLocaleString('pt-BR', { month: 'short' }).toUpperCase()}</span>
+          </div>
+          <div class="agenda-content flex-grow-1">
+            <h4>${event.title}</h4>
+            <p>${event.description}</p>
+            <div class="agenda-details">
+              <span>${event.time}</span>
+              <span>${event.location}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 // Validação de email
@@ -344,136 +425,6 @@ function handleLoginLink() {
 // Inicializar manipulação do link de login
 handleLoginLink()
 
-// Dados dos posts do blog
-const blogPosts = [
-  {
-    id: 1,
-    title: "Como o projeto tem transformado vidas",
-    content: `
-      <p>O projeto Teixeira Judô tem sido uma força transformadora em nossa comunidade, impactando positivamente a vida de centenas de pessoas através da prática do judô e valores fundamentais como disciplina, respeito e perseverança.</p>
-      
-      <h4>O Impacto na Comunidade</h4>
-      <p>Desde o início do projeto, temos observado mudanças significativas na vida dos participantes. Crianças que antes tinham dificuldades de concentração na escola agora demonstram maior foco e disciplina em suas atividades acadêmicas.</p>
-      
-      <p>Os valores do judô - como respeito ao próximo, humildade e perseverança - têm se refletido não apenas no tatame, mas também no dia a dia dos nossos alunos, criando um efeito positivo que se estende às suas famílias e à comunidade como um todo.</p>
-      
-      <h5>Resultados Mensuráveis</h5>
-      <p>Nos últimos dois anos, registramos:</p>
-      <ul>
-        <li>Melhoria de 85% no rendimento escolar dos participantes</li>
-        <li>Redução de 70% em casos de indisciplina</li>
-        <li>Aumento da autoestima em 90% dos alunos</li>
-        <li>Fortalecimento dos laços familiares em 80% dos casos</li>
-      </ul>
-      
-      <p>Estes números refletem o poder transformador do esporte quando aliado a uma metodologia pedagógica sólida e ao comprometimento de toda a equipe envolvida no projeto.</p>
-      
-      <h4>Histórias de Sucesso</h4>
-      <p>Entre as muitas histórias inspiradoras, destacamos a de João, de 12 anos, que chegou ao projeto com sérios problemas de comportamento e hoje é um dos nossos principais exemplos de disciplina e liderança entre os colegas.</p>
-      
-      <p>Maria, mãe de uma de nossas alunas, relata: "Minha filha era muito tímida e tinha baixa autoestima. Depois que começou no judô, ela se tornou mais confiante e até passou a ajudar outros colegas na escola."</p>
-      
-      <p>Acreditamos que o judô pode ser uma ferramenta poderosa de transformação social, e continuaremos trabalhando para levar seus benefícios a cada vez mais pessoas em nossa comunidade.</p>
-    `,
-    excerpt:
-      "Descubra como nosso projeto social tem impactado positivamente a vida de centenas de pessoas através do judô.",
-    date: "2024-01-15",
-    author: "Admin",
-    image: "/placeholder.svg?height=400&width=800",
-  },
-  {
-    id: 2,
-    title: "Resultados do último evento",
-    content: `
-      <p>O último evento realizado pelo projeto Teixeira Judô foi um grande sucesso, reunindo mais de 200 participantes entre atletas, familiares e membros da comunidade em uma celebração do esporte e dos valores que defendemos.</p>
-      
-      <h4>Competições e Demonstrações</h4>
-      <p>O evento contou com competições em diferentes categorias, desde iniciantes até faixas mais avançadas, proporcionando a todos os participantes a oportunidade de demonstrar suas habilidades e o progresso alcançado durante os treinamentos.</p>
-      
-      <p>As demonstrações técnicas foram um dos pontos altos do evento, mostrando a evolução dos alunos e a qualidade do ensino oferecido pelo projeto. Familiares e visitantes puderam acompanhar de perto o trabalho desenvolvido ao longo dos meses.</p>
-      
-      <h5>Premiações e Reconhecimentos</h5>
-      <p>Além das medalhas tradicionais por colocação, criamos categorias especiais para reconhecer valores como:</p>
-      <ul>
-        <li>Maior evolução técnica</li>
-        <li>Melhor espírito esportivo</li>
-        <li>Dedicação aos estudos</li>
-        <li>Liderança e cooperação</li>
-      </ul>
-      
-      <h4>Atividades Paralelas</h4>
-      <p>O evento não se limitou às competições. Organizamos também:</p>
-      <ul>
-        <li>Oficinas de primeiros socorros</li>
-        <li>Palestras sobre nutrição esportiva</li>
-        <li>Atividades recreativas para as famílias</li>
-        <li>Exposição fotográfica do projeto</li>
-      </ul>
-      
-      <p>Essas atividades complementares reforçaram o caráter educativo e comunitário do nosso projeto, envolvendo toda a família no processo de desenvolvimento dos jovens atletas.</p>
-      
-      <h4>Depoimentos dos Participantes</h4>
-      <p><em>"Foi emocionante ver meu filho competindo e demonstrando tudo que aprendeu. O projeto realmente mudou nossa família para melhor."</em> - Ana Paula, mãe de participante.</p>
-      
-      <p><em>"Nunca imaginei que conseguiria chegar até aqui. O judô me ensinou que posso superar qualquer obstáculo."</em> - Carlos, 14 anos, faixa laranja.</p>
-      
-      <p>O sucesso deste evento nos motiva a continuar organizando atividades que fortaleçam os laços da comunidade e proporcionem novas oportunidades de crescimento para nossos alunos.</p>
-    `,
-    excerpt: "Confira os resultados e destaques do nosso último evento de judô realizado no centro comunitário.",
-    date: "2024-01-10",
-    author: "Admin",
-    image: "/placeholder.svg?height=400&width=800",
-  },
-  {
-    id: 3,
-    title: "Novos parceiros se juntam ao projeto",
-    content: `
-      <p>Estamos muito felizes em anunciar que novos parceiros se juntaram ao projeto Teixeira Judô, fortalecendo ainda mais nossa capacidade de impactar positivamente a vida de crianças e jovens em nossa comunidade.</p>
-      
-      <h4>Parcerias Estratégicas</h4>
-      <p>As novas parcerias incluem empresas locais, organizações não-governamentais e instituições educacionais que compartilham nossa visão de transformação social através do esporte.</p>
-      
-      <p>Cada parceiro traz contribuições únicas para o projeto, desde apoio financeiro até expertise técnica e recursos materiais que nos permitirão expandir nosso alcance e melhorar a qualidade dos serviços oferecidos.</p>
-      
-      <h5>Benefícios das Parcerias</h5>
-      <p>Com o apoio dos novos parceiros, poderemos:</p>
-      <ul>
-        <li>Ampliar o número de vagas disponíveis</li>
-        <li>Melhorar a infraestrutura do dojo</li>
-        <li>Oferecer equipamentos de melhor qualidade</li>
-        <li>Implementar novos programas educacionais</li>
-        <li>Realizar mais eventos comunitários</li>
-      </ul>
-      
-      <h4>Compromisso com a Transparência</h4>
-      <p>Mantemos nosso compromisso com a transparência na gestão dos recursos recebidos. Todos os parceiros têm acesso a relatórios detalhados sobre o uso dos recursos e o impacto gerado pelo projeto.</p>
-      
-      <p>Acreditamos que a prestação de contas é fundamental para manter a confiança de nossos apoiadores e garantir a sustentabilidade do projeto a longo prazo.</p>
-      
-      <h4>Reconhecimento da Comunidade</h4>
-      <p>O crescimento do número de parceiros reflete o reconhecimento da comunidade sobre a importância e efetividade do nosso trabalho. É gratificante ver que nossa missão ressoa com tantas pessoas e organizações.</p>
-      
-      <p>Este apoio nos dá ainda mais motivação para continuar trabalhando com dedicação e excelência, sempre buscando formas de melhorar e inovar em nossa abordagem pedagógica.</p>
-      
-      <h4>Como Você Pode Participar</h4>
-      <p>Se você ou sua organização têm interesse em apoiar o projeto Teixeira Judô, entre em contato conosco. Existem diversas formas de contribuir:</p>
-      <ul>
-        <li>Patrocínio financeiro</li>
-        <li>Doação de equipamentos</li>
-        <li>Voluntariado especializado</li>
-        <li>Divulgação do projeto</li>
-        <li>Parcerias institucionais</li>
-      </ul>
-      
-      <p>Juntos, podemos fazer a diferença na vida de ainda mais crianças e jovens, construindo um futuro melhor para nossa comunidade através dos valores e ensinamentos do judô.</p>
-    `,
-    excerpt: "Estamos felizes em anunciar novos parceiros que irão fortalecer ainda mais nosso projeto social.",
-    date: "2024-01-05",
-    author: "Admin",
-    image: "/placeholder.svg?height=400&width=800",
-  },
-]
-
 // Manipular links "ler mais" do blog
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("read-more")) {
@@ -495,17 +446,15 @@ document.addEventListener("click", (e) => {
 
 // Abrir modal de post do blog
 function openBlogPostModal(post) {
-  // Atualizar conteúdo do modal
-  document.getElementById("blogPostModalTitle").textContent = post.title
-  document.getElementById("blogPostDate").textContent = formatBlogDate(post.date)
-  document.getElementById("blogPostAuthor").textContent = post.author
-  document.getElementById("blogPostImage").src = post.image
-  document.getElementById("blogPostImage").alt = post.title
-  document.getElementById("blogPostContent").innerHTML = post.content
+  document.getElementById("blogPostModalTitle").textContent = post.title;
+  document.getElementById("blogPostDate").textContent = formatBlogDate(post.date);
+  document.getElementById("blogPostAuthor").textContent = post.author;
+  document.getElementById("blogPostImage").src = post.image;
+  document.getElementById("blogPostImage").alt = post.title;
+  document.getElementById("blogPostContent").innerHTML = post.content;
 
-  // Mostrar modal
-  const modal = new bootstrap.Modal(document.getElementById("blogPostModal"))
-  modal.show()
+  const modal = new bootstrap.Modal(document.getElementById("blogPostModal"));
+  modal.show();
 }
 
 // Formatar data para o blog
