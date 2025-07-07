@@ -1,15 +1,15 @@
 import { apiService } from './api-service.js';
 
 // Quando o conteúdo DOM estiver carregado
-document.addEventListener("DOMContentLoaded", () => {
-  // Inicializar todas as funcionalidades
+document.addEventListener("DOMContentLoaded", async () => {
+  // Inicializar funcionalidades básicas
   initSmoothScrolling()
   initNavbarScroll()
-  initContactForm()
   initCarousel()
   initGalleryHover()
-  loadBlogPosts()
-  loadEvents()
+  
+  // Fazer login automático e carregar dados
+  await autoLoginAndLoadData()
 })
 
 // Rolagem suave para links de navegação
@@ -44,46 +44,40 @@ function initNavbarScroll() {
   })
 }
 
-// Manipulação do formulário de contato
-function initContactForm() {
-  const contactForm = document.getElementById("contactForm");
 
-  if (contactForm) {
-    contactForm.addEventListener("submit", async function (e) {
-      e.preventDefault();
 
-      const formData = {
-        name: document.getElementById("name").value,
-        email: document.getElementById("email").value,
-        message: document.getElementById("message").value
-      };
-
-      // Validação básica
-      if (!formData.name || !formData.email || !formData.message) {
-        showAlert("Por favor, preencha todos os campos.", "error");
-        return;
-      }
-
-      if (!isValidEmail(formData.email)) {
-        showAlert("Por favor, insira um email válido.", "error");
-        return;
-      }
-
-      try {
-        await apiService.sendContactForm(formData);
-        showAlert("Mensagem enviada com sucesso! Entraremos em contato em breve.", "success");
-        this.reset();
-      } catch (error) {
-        showAlert("Ocorreu um erro ao enviar sua mensagem. Tente novamente mais tarde.", "error");
-      }
-    });
+async function autoLoginAndLoadData() {
+  try {
+    console.log('Fazendo login automático...');
+    
+    // Fazer login com credenciais fixas
+    const loginResponse = await apiService.login('masteradmin@gmail.com', '123456');
+    
+    if (loginResponse.data && loginResponse.data.token) {
+      // Salvar token no localStorage
+      localStorage.setItem('authToken', loginResponse.data.token);
+      console.log('Login realizado com sucesso! Token salvo.');
+      
+      // Carregar dados após login
+      await loadBlogPosts();
+      await loadEvents();
+    } else {
+      console.error('Resposta de login inválida:', loginResponse);
+    }
+  } catch (error) {
+    console.error('Erro no login automático:', error);
+    // Tentar carregar dados sem autenticação (endpoints públicos)
+    await loadBlogPosts();
+    await loadEvents();
   }
 }
 
 async function loadBlogPosts() {
   try {
-    const posts = await apiService.getPosts();
-    renderBlogPosts(posts.filter(post => post.status === 'published'));
+    const response = await apiService.getPosts();
+    // A API retorna { data, message }
+    const posts = response.data;
+    renderBlogPosts(posts);
   } catch (error) {
     console.error('Erro ao carregar posts:', error);
   }
@@ -91,7 +85,9 @@ async function loadBlogPosts() {
 
 async function loadEvents() {
   try {
-    const events = await apiService.getEvents();
+    const response = await apiService.getEvents();
+    // A API retorna { data, message }
+    const events = response.data;
     renderEvents(events);
   } catch (error) {
     console.error('Erro ao carregar eventos:', error);
@@ -105,11 +101,11 @@ function renderBlogPosts(posts) {
   blogContainer.innerHTML = posts.map(post => `
     <div class="col-lg-4 mb-4">
       <div class="blog-card">
-        <img src="${post.image}" alt="${post.title}" class="blog-img">
+        <img src="${post.image || 'assets/teixeira-judo-logo.png'}" alt="${post.titulo}" class="blog-img">
         <div class="blog-content">
-          <h4>${post.title}</h4>
-          <p>${post.excerpt}</p>
-          <a href="#" class="read-more" data-id="${post.id}">Ler mais</a>
+          <h4>${post.titulo}</h4>
+          <p>${post.conteudo ? post.conteudo.substring(0, 100) + '...' : ''}</p>
+          <a href="#" class="read-more" data-id="${post.idPost}">Ler mais</a>
         </div>
       </div>
     </div>
@@ -120,7 +116,7 @@ function renderBlogPosts(posts) {
     link.addEventListener('click', async (e) => {
       e.preventDefault();
       const postId = link.getAttribute('data-id');
-      const post = posts.find(p => p.id == postId);
+      const post = posts.find(p => p.idPost == postId);
       if (post) openBlogPostModal(post);
     });
   });
@@ -131,7 +127,7 @@ function renderEvents(events) {
   if (!agendaContainer) return;
   
   agendaContainer.innerHTML = events.map(event => {
-    const eventDate = new Date(event.date);
+    const eventDate = new Date(event.dataInicio);
     return `
       <div class="col-lg-6 mb-4">
         <div class="agenda-card d-flex">
@@ -140,11 +136,10 @@ function renderEvents(events) {
             <span class="month">${eventDate.toLocaleString('pt-BR', { month: 'short' }).toUpperCase()}</span>
           </div>
           <div class="agenda-content flex-grow-1">
-            <h4>${event.title}</h4>
-            <p>${event.description}</p>
+            <h4>${event.titulo}</h4>
+            <p>${event.descricao}</p>
             <div class="agenda-details">
-              <span>${event.time}</span>
-              <span>${event.location}</span>
+              <span>${event.local}</span>
             </div>
           </div>
         </div>
@@ -446,12 +441,12 @@ document.addEventListener("click", (e) => {
 
 // Abrir modal de post do blog
 function openBlogPostModal(post) {
-  document.getElementById("blogPostModalTitle").textContent = post.title;
-  document.getElementById("blogPostDate").textContent = formatBlogDate(post.date);
-  document.getElementById("blogPostAuthor").textContent = post.author;
-  document.getElementById("blogPostImage").src = post.image;
-  document.getElementById("blogPostImage").alt = post.title;
-  document.getElementById("blogPostContent").innerHTML = post.content;
+  document.getElementById("blogPostModalTitle").textContent = post.titulo;
+  document.getElementById("blogPostDate").textContent = formatBlogDate(post.dataPublicacao);
+  document.getElementById("blogPostAuthor").textContent = post.usuario ? post.usuario.nome : "Admin";
+  document.getElementById("blogPostImage").src = post.image || 'assets/teixeira-judo-logo.png';
+  document.getElementById("blogPostImage").alt = post.titulo;
+  document.getElementById("blogPostContent").innerHTML = post.conteudo;
 
   const modal = new bootstrap.Modal(document.getElementById("blogPostModal"));
   modal.show();

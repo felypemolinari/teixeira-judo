@@ -61,13 +61,6 @@
                                 <span>Eventos</span>
                             </a>
                         </li>
-
-                        <li class="nav-item" data-section="contact">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-question-circle"></i>
-                                <span>FAQ/Contato</span>
-                            </a>
-                        </li>
                     </ul>
                 </nav>
             </aside>
@@ -174,33 +167,9 @@
                             <textarea class="form-control" id="postContent" rows="10" required></textarea>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="postStatus" class="form-label">Status</label>
-                                    <select class="form-select" id="postStatus">
-                                        <option value="draft">Rascunho</option>
-                                        <option value="published">Publicado</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="postDate" class="form-label">Data</label>
-                                    <input type="date" class="form-control" id="postDate">
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="mb-3">
-                            <label for="postImageFile" class="form-label">Imagem Destacada</label>
-                            <input type="file" class="form-control" id="postImageFile" accept=".jpg,.jpeg,.png">
-                            <div class="image-preview" id="postImagePreview"></div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="postExcerpt" class="form-label">Resumo</label>
-                            <textarea class="form-control" id="postExcerpt" rows="3" placeholder="Breve descrição do post..."></textarea>
+                            <label for="postDate" class="form-label">Data</label>
+                            <input type="date" class="form-control" id="postDate">
                         </div>
                     </form>
                 </div>
@@ -235,16 +204,22 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="eventDate" class="form-label">Data</label>
                                     <input type="date" class="form-control" id="eventDate" required>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label for="eventTime" class="form-label">Horário</label>
-                                    <input type="text" class="form-control" id="eventTime" placeholder="14:00 - 17:00" required>
+                                    <label for="eventTimeStart" class="form-label">Hora Início</label>
+                                    <input type="time" class="form-control" id="eventTimeStart" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="eventTimeEnd" class="form-label">Hora Fim</label>
+                                    <input type="time" class="form-control" id="eventTimeEnd" required>
                                 </div>
                             </div>
                         </div>

@@ -37,20 +37,22 @@ function initLoginForm() {
 // Processar submissão do login
 async function handleLogin() {
   const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  const senha = document.getElementById("senha").value;
   const submitButton = document.querySelector(".btn-login");
 
   clearErrors();
 
-  if (!validateForm(email, password)) {
+  if (!validateForm(email, senha)) {
     return;
   }
 
   showLoading(submitButton);
 
   try {
-    const data = await apiService.login(email, password);
-    localStorage.setItem('authToken', data.token);
+    const response = await apiService.login(email, senha);
+    // A API retorna { data: { token }, message }
+    const token = response.data.token;
+    localStorage.setItem('authToken', token);
     showSuccess("Login realizado com sucesso!");
     
     setTimeout(() => {

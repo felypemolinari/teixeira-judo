@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8080'; // Mantenha isso configurável
+const API_BASE_URL = 'https://evolution.alicefinancas.com.br'; // URL atualizada
 
 class ApiService {
     // Método genérico melhorado
@@ -48,81 +48,73 @@ class ApiService {
     }
 
     // Autenticação
-    async login(email, password) {
-        return this.request('/api/auth/login', 'POST', { email, password }, false);
+    async login(email, senha) {
+        return this.request('/auth/login', 'POST', { email, senha }, false);
     }
 
     async verifyToken() {
-        return this.request('/api/auth/verify');
+        return this.request('/auth/verify');
     }
 
     // Posts
     async getPost(id) {
-        return this.request(`/api/posts/${id}`);
+        const hasToken = localStorage.getItem('authToken');
+        return this.request(`/posts/${id}`, 'GET', null, !!hasToken);
     }
 
     async getPosts() {
-        return this.request('/api/posts');
+        const hasToken = localStorage.getItem('authToken');
+        return this.request('/posts', 'GET', null, !!hasToken);
     }
 
     async createPost(postData) {
-        return this.request('/api/posts', 'POST', postData);
+        return this.request('/posts', 'POST', postData);
     }
 
     async updatePost(id, postData) {
-        return this.request(`/api/posts/${id}`, 'PUT', postData);
+        return this.request(`/posts/${id}`, 'PUT', postData);
     }
 
     async deletePost(id) {
-        return this.request(`/api/posts/${id}`, 'DELETE');
+        return this.request(`/posts/${id}`, 'DELETE');
     }
 
     // Eventos
     async getEvents() {
-        return this.request('/api/events');
+        const hasToken = localStorage.getItem('authToken');
+        return this.request('/eventos', 'GET', null, !!hasToken);
     }
 
     async createEvent(eventData) {
-        return this.request('/api/events', 'POST', eventData);
+        return this.request('/eventos', 'POST', eventData);
     }
 
     async updateEvent(id, eventData) {
-        return this.request(`/api/events/${id}`, 'PUT', eventData);
+        return this.request(`/eventos/${id}`, 'PUT', eventData);
     }
 
     async deleteEvent(id) {
-        return this.request(`/api/events/${id}`, 'DELETE');
+        return this.request(`/eventos/${id}`, 'DELETE');
     }
 
     // Depoimentos
     async getTestimonials() {
-        return this.request('/api/testimonials');
+        return this.request('/testimonials');
     }
 
     async createTestimonial(testimonialData) {
-        return this.request('/api/testimonials', 'POST', testimonialData);
+        return this.request('/testimonials', 'POST', testimonialData);
     }
 
     async updateTestimonial(id, testimonialData) {
-        return this.request(`/api/testimonials/${id}`, 'PUT', testimonialData);
+        return this.request(`/testimonials/${id}`, 'PUT', testimonialData);
     }
 
     async deleteTestimonial(id) {
-        return this.request(`/api/testimonials/${id}`, 'DELETE');
+        return this.request(`/testimonials/${id}`, 'DELETE');
     }
 
-    // Contatos
-    async getContacts() {
-        return this.request('/api/contacts');
-    }
 
-    async deleteContact(id) {
-        return this.request(`/api/contacts/${id}`, 'DELETE');
-    }
-
-    async sendContactForm(data) {
-        return this.request('/api/contact', 'POST', data, false);
-    }
 }
 
 export const apiService = new ApiService();

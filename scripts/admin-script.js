@@ -5,13 +5,22 @@ let posts = []
 let events = []
 let currentEditingItem = null
 let currentSection = "posts"
-let contacts = []
 
 // Inicializar painel administrativo
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    // Verificar autenticação
-    await apiService.verifyToken();
+    // Verificar se há token
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.error('Token não encontrado');
+      window.location.href = 'login.html';
+      return;
+    }
+
+    console.log('Token encontrado:', token);
+    
+    // Verificar autenticação (comentado temporariamente)
+    // await apiService.verifyToken();
     initializeAdminPanel();
     loadAllData();
     setupEventListeners();
@@ -24,9 +33,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 // Carregar todos os dados
 async function loadAllData() {
   try {
-    posts = await apiService.getPosts();
-    events = await apiService.getEvents();
-    contacts = await apiService.getContacts();
+    const postsResponse = await apiService.getPosts();
+    const eventsResponse = await apiService.getEvents();
+    
+    // Extrair dados da resposta da API
+    posts = postsResponse.data;
+    events = eventsResponse.data;
+    
     renderAllSections();
   } catch (error) {
     console.error('Erro ao carregar dados:', error);
@@ -45,7 +58,6 @@ function initializeAdminPanel() {
 function renderAllSections() {
   renderPosts()
   renderEvents()
-  renderContacts()
 }
 
 // Configurar listeners de eventos
@@ -56,26 +68,16 @@ function setupEventListeners() {
   setupPostManagement()
   setupEventManagement()
   setupModalEvents()
-  setupFileUploads()
 
   document.addEventListener('click', function(e) {
-    const btn = e.target.closest('.btn-edit, .btn-delete, .btn-view');
+    const btn = e.target.closest('.btn-delete');
     if (!btn) return;
     
     const id = btn.dataset.id;
     const type = btn.dataset.type;
     
-    if (btn.classList.contains('btn-edit')) {
-      if (type === 'post') editPost(id);
-      if (type === 'event') editEvent(id);
-    }
-    
     if (btn.classList.contains('btn-delete')) {
       deleteItem(type, id);
-    }
-    
-    if (btn.classList.contains('btn-view')) {
-      viewContactMessage(id);
     }
   });
 }
@@ -187,29 +189,7 @@ function setupModalEvents() {
   })
 }
 
-// Configurar uploads de arquivos
-function setupFileUploads() {
-  setupImagePreview("postImageFile", "postImagePreview")
-}
 
-// Configurar pré-visualização de imagem
-function setupImagePreview(inputId, previewId) {
-  const input = document.getElementById(inputId)
-  const preview = document.getElementById(previewId)
-
-  input.addEventListener("change", (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`
-      }
-      reader.readAsDataURL(file)
-    } else {
-      preview.innerHTML = ""
-    }
-  })
-}
 
 // Renderizar posts
 function renderPosts() {
@@ -232,14 +212,11 @@ function renderPosts() {
 
   tbody.innerHTML = posts.map(post => `
     <tr>
-      <td>${post.title}</td>
-      <td>${formatDate(post.date)}</td>
+      <td>${post.titulo}</td>
+      <td>${formatDate(post.dataPublicacao)}</td>
       <td>
         <div class="action-buttons">
-          <button class="btn btn-edit btn-sm" data-id="${post.id}" data-type="post">
-            Editar
-          </button>
-          <button class="btn btn-delete btn-sm" data-id="${post.id}" data-type="post">
+          <button class="btn btn-delete btn-sm" data-id="${post.idPost}" data-type="post">
             Excluir
           </button>
         </div>
@@ -271,16 +248,12 @@ function renderEvents() {
     .map(
       (event) => `
     <tr>
-      <td>${event.title}</td>
-      <td>${formatDate(event.date)}</td>
-      <td>${event.time}</td>
-      <td>${event.location}</td>
+      <td>${event.titulo}</td>
+      <td>${formatDate(event.dataInicio)}</td>
+      <td>${event.local}</td>
       <td>
         <div class="action-buttons">
-          <button class="btn btn-edit btn-sm" onclick="editEvent(${event.id})">
-            Editar
-          </button>
-          <button class="btn btn-delete btn-sm" onclick="deleteItem('event', ${event.id})">
+          <button class="btn btn-delete btn-sm" onclick="deleteItem('event', ${event.idEvento})">
             Excluir
           </button>
         </div>
@@ -291,115 +264,7 @@ function renderEvents() {
     .join("")
 }
 
-// Renderizar contatos
-function renderContacts() {
-  const tbody = document.getElementById("contactTableBody");
 
-  if (contacts.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="5" class="text-center py-5"> <!-- Ajustado de 6 para 5 colunas -->
-          <div class="empty-state">
-            <i class="fas fa-envelope"></i>
-            <h3>Nenhuma mensagem recebida</h3>
-            <p>Todas as mensagens de contato aparecerão aqui.</p>
-          </div>
-        </td>
-      </tr>
-    `;
-    return;
-
-    tbody.innerHTML = contacts.map(contact => `
-    <tr>
-      <td>${contact.name}</td>
-      <td>${contact.email}</td>
-      <td>${contact.message.substring(0, 50)}...</td>
-      <td>${formatDate(contact.date)}</td>
-      <td>
-        <div class="action-buttons">
-          <button class="btn btn-view btn-sm" data-id="${contact.id}" data-type="contact">
-            <i class="fas fa-eye"></i>
-          </button>
-          <button class="btn btn-delete btn-sm" data-id="${contact.id}" data-type="contact">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
-      </td>
-    </tr>
-  `).join("");
-  }
-
-  tbody.innerHTML = contacts
-    .map(
-      (contact) => `
-      <tr>
-        <td>${contact.name}</td>
-        <td>${contact.email}</td>
-        <td class="message-preview">${contact.message.substring(0, 50)}${contact.message.length > 50 ? '...' : ''}</td>
-        <td>${formatDate(contact.date)}</td>
-        <td>
-          <div class="action-buttons">
-            <button class="btn btn-view btn-sm" onclick="viewContactMessage(${contact.id})">
-              <i class="fas fa-eye"></i>
-            </button>
-            <button class="btn btn-delete btn-sm" onclick="deleteItem('contact', ${contact.id})">
-              <i class="fas fa-trash"></i>
-            </button>
-          </div>
-        </td>
-      </tr>
-    `
-    )
-    .join("");
-}
-
-function viewContactMessage(id) {
-    const contact = contacts.find(c => c.id == id)
-    if (!contact) return
-
-    // Marcar como lida se ainda não estiver
-    if (contact.status === 'unread') {
-        contact.status = 'read'
-        renderContacts()
-    }
-
-    // Mostrar modal com a mensagem completa
-    const modal = new bootstrap.Modal(document.createElement('div'))
-    modal._element.innerHTML = `
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Mensagem de ${contact.name}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p><strong>Email:</strong> ${contact.email}</p>
-                    <p><strong>Data:</strong> ${formatDate(contact.date)}</p>
-                    <hr>
-                    <p>${contact.message}</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button type="button" class="btn btn-primary" onclick="replyToContact('${contact.email}')">Responder</button>
-                </div>
-            </div>
-        </div>
-    `
-    document.body.appendChild(modal._element)
-    modal.show()
-}
-
-function toggleReadStatus(id) {
-    const contact = contacts.find(c => c.id == id)
-    if (contact) {
-        contact.status = contact.status === 'read' ? 'unread' : 'read'
-        renderContacts()
-    }
-}
-
-function replyToContact(email) {
-    window.open(`mailto:${email}`, '_blank')
-}
 
 // Formatar data
 function formatDate(dateString) {
@@ -408,62 +273,29 @@ function formatDate(dateString) {
 }
 
 // Funções de modal
-function openPostModal(post = null) {
+function openPostModal() {
   const modal = new bootstrap.Modal(document.getElementById("postModal"))
   const modalTitle = document.getElementById("postModalTitle")
 
-  if (post) {
-    modalTitle.textContent = "Editar Post"
-    fillPostForm(post)
-    currentEditingItem = post
-  } else {
-    modalTitle.textContent = "Novo Post"
-    resetForm("post")
-    currentEditingItem = null
-  }
+  modalTitle.textContent = "Novo Post"
+  resetForm("post")
+  currentEditingItem = null
 
   modal.show()
 }
 
-function openEventModal(event = null) {
+function openEventModal() {
   const modal = new bootstrap.Modal(document.getElementById("eventModal"))
   const modalTitle = document.getElementById("eventModalTitle")
 
-  if (event) {
-    modalTitle.textContent = "Editar Evento"
-    fillEventForm(event)
-    currentEditingItem = event
-  } else {
-    modalTitle.textContent = "Novo Evento"
-    resetForm("event")
-    currentEditingItem = null
-  }
+  modalTitle.textContent = "Novo Evento"
+  resetForm("event")
+  currentEditingItem = null
 
   modal.show()
 }
 
-// Funções para preencher formulários
-function fillPostForm(post) {
-  document.getElementById("postId").value = post.id
-  document.getElementById("postTitle").value = post.title
-  document.getElementById("postContent").value = post.content
-  document.getElementById("postStatus").value = post.status
-  document.getElementById("postDate").value = post.date
-  document.getElementById("postExcerpt").value = post.excerpt || ""
 
-  if (post.image) {
-    document.getElementById("postImagePreview").innerHTML = `<img src="${post.image}" alt="Preview">`
-  }
-}
-
-function fillEventForm(event) {
-  document.getElementById("eventId").value = event.id
-  document.getElementById("eventTitle").value = event.title
-  document.getElementById("eventDescription").value = event.description
-  document.getElementById("eventDate").value = event.date
-  document.getElementById("eventTime").value = event.time
-  document.getElementById("eventLocation").value = event.location
-}
 
 // Funções para resetar formulários
 function resetForm(type) {
@@ -475,9 +307,6 @@ function resetForm(type) {
   const form = document.getElementById(forms[type])
   if (form) {
     form.reset()
-
-    const previews = form.querySelectorAll(".image-preview")
-    previews.forEach((preview) => (preview.innerHTML = ""))
 
     if (type === "post" || type === "event") {
       const today = new Date().toISOString().split("T")[0]
@@ -498,24 +327,17 @@ async function savePost() {
   }
 
   const postData = {
-    title: document.getElementById("postTitle").value,
-    content: document.getElementById("postContent").value,
-    status: document.getElementById("postStatus").value,
-    date: document.getElementById("postDate").value,
-    excerpt: document.getElementById("postExcerpt").value,
-    author: "Admin",
+    titulo: document.getElementById("postTitle").value,
+    conteudo: document.getElementById("postContent").value,
+    dataPublicacao: document.getElementById("postDate").value + "T00:00:00",
   };
 
   try {
     saveWithLoading("savePostBtn", "Salvando...", async () => {
-      if (currentEditingItem) {
-        await apiService.updatePost(currentEditingItem.id, postData);
-      } else {
-        await apiService.createPost(postData);
-      }
+      await apiService.createPost(postData);
       await loadAllData();
       closeModal("postModal");
-      showAlert("Post salvo com sucesso!", "success");
+      showAlert("Post criado com sucesso!", "success");
     });
   } catch (error) {
     console.error('Erro ao salvar post:', error);
@@ -531,23 +353,19 @@ async function saveEvent() {
   }
 
   const eventData = {
-    title: document.getElementById("eventTitle").value,
-    description: document.getElementById("eventDescription").value,
-    date: document.getElementById("eventDate").value,
-    time: document.getElementById("eventTime").value,
-    location: document.getElementById("eventLocation").value,
+    titulo: document.getElementById("eventTitle").value,
+    descricao: document.getElementById("eventDescription").value,
+    dataInicio: document.getElementById("eventDate").value + "T" + document.getElementById("eventTimeStart").value + ":00",
+    dataFim: document.getElementById("eventDate").value + "T" + document.getElementById("eventTimeEnd").value + ":00",
+    local: document.getElementById("eventLocation").value,
   };
 
   try {
     saveWithLoading("saveEventBtn", "Salvando...", async () => {
-      if (currentEditingItem) {
-        await apiService.updateEvent(currentEditingItem.id, eventData);
-      } else {
-        await apiService.createEvent(eventData);
-      }
+      await apiService.createEvent(eventData);
       await loadAllData();
       closeModal("eventModal");
-      showAlert("Evento salvo com sucesso!", "success");
+      showAlert("Evento criado com sucesso!", "success");
     });
   } catch (error) {
     console.error('Erro ao salvar evento:', error);
@@ -555,16 +373,7 @@ async function saveEvent() {
   }
 }
 
-// Funções de edição
-function editPost(postId) {
-  const post = posts.find((p) => p.id == postId)
-  if (post) openPostModal(post)
-}
 
-function editEvent(eventId) {
-  const event = events.find((e) => e.id == eventId)
-  if (event) openEventModal(event)
-}
 
 // Funções de exclusão
 function deleteItem(type, id) {
@@ -587,9 +396,6 @@ async function confirmDelete() {
           break;
         case "event":
           await apiService.deleteEvent(id);
-          break;
-        case "contact":
-          await apiService.deleteContact(id);
           break;
       }
       await loadAllData();
