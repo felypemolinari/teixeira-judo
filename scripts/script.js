@@ -256,16 +256,16 @@ function openImageModal(src, alt) {
   // Criar modal se não existir
   let modal = document.getElementById("imageModal")
   if (!modal) {
-    modal = document.createElement("div")
-    modal.id = "imageModal"
+    modal = document.createElement("div");
+    modal.id = "imageModal";
     modal.innerHTML = `
-            <div class="modal-overlay" onclick="closeImageModal()">
-                <div class="modal-content" onclick="event.stopPropagation()">
-                    <img id="modalImage" src="/placeholder.svg" alt="">
-                    <button class="modal-close" onclick="closeImageModal()">×</button>
-                </div>
-            </div>
-        `
+      <div class="modal-overlay">
+        <div class="modal-content">
+          <img id="modalImage" src="/placeholder.svg" alt="">
+          <button class="modal-close">×</button>
+        </div>
+      </div>
+    `;
 
     // Adicionar estilos do modal
     modal.style.cssText = `
@@ -322,7 +322,14 @@ function openImageModal(src, alt) {
       document.head.appendChild(style)
     }
 
-    document.body.appendChild(modal)
+    document.body.appendChild(modal);
+
+    // Adicionar event listeners programaticamente
+    modal.querySelector('.modal-close').addEventListener('click', closeImageModal);
+    modal.querySelector('.modal-overlay').addEventListener('click', closeImageModal);
+    modal.querySelector('.modal-content').addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
   }
 
   // Definir imagem e mostrar modal
